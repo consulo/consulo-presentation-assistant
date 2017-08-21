@@ -61,7 +61,7 @@ import com.intellij.util.ui.UIUtil;
  * @author VISTALL
  * @since 21-Aug-17
  */
-public class ActionInfoPanel extends NonOpaquePanel implements Disposable
+class ActionInfoPanel extends NonOpaquePanel implements Disposable
 {
 	public class FadeInOutAnimator extends Animator
 	{

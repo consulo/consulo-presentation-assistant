@@ -68,7 +68,7 @@ public class PresentationAssistant implements Disposable, ApplicationComponent, 
 		if(value && myPresenter == null)
 		{
 			myPresenter = new ShortcutPresenter();
-			myPresenter.showActionInfo(new ShortcutPresenter.ActionData("presentationAssistant.ShowActionDescriptions", project, "Show Descriptions of Actions"));
+			myPresenter.showActionInfo(new ShortcutPresenter.ActionData("presentationAssistant.ShowActionDescriptions", project, "Show Descriptions of Actions", null));
 		}
 
 		if(!value && myPresenter != null)

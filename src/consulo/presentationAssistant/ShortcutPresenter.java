@@ -17,6 +17,9 @@
 package consulo.presentationAssistant;
 
 import java.awt.Font;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,7 +29,9 @@ import java.util.Set;
 
 import javax.swing.KeyStroke;
 
+import org.intellij.lang.annotations.JdkConstants;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -35,6 +40,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
+import com.intellij.openapi.actionSystem.MouseShortcut;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.keymap.MacKeymapUtil;
@@ -52,19 +58,21 @@ import com.intellij.util.containers.ContainerUtil;
  * @author VISTALL
  * @since 21-Aug-17
  */
-public class ShortcutPresenter implements Disposable
+class ShortcutPresenter implements Disposable
 {
 	public static class ActionData
 	{
-		private String actionId;
-		private Project project;
-		private String actionText;
+		private final String myActionId;
+		private final Project myProject;
+		private final String myActionText;
+		private final InputEvent myEvent;
 
-		public ActionData(String actionId, Project project, String actionText)
+		public ActionData(String actionId, Project project, String actionText, @Nullable InputEvent event)
 		{
-			this.actionId = actionId;
-			this.project = project;
-			this.actionText = actionText;
+			myActionId = actionId;
+			myProject = project;
+			myActionText = actionText;
+			myEvent = event;
 		}
 	}
 
@@ -115,7 +123,7 @@ public class ShortcutPresenter implements Disposable
 				{
 					Project project = event.getProject();
 					String text = event.getPresentation().getText();
-					currentAction = new ActionData(id, project, text);
+					currentAction = new ActionData(id, project, text, event.getInputEvent());
 				}
 			}
 
@@ -124,7 +132,7 @@ public class ShortcutPresenter implements Disposable
 			{
 				ActionData actionData = currentAction;
 				String actionId = ActionManager.getInstance().getId(action);
-				if(actionData != null && actionData.actionId.equals(actionId))
+				if(actionData != null && actionData.myActionId.equals(actionId))
 				{
 					showActionInfo(actionData);
 				}
@@ -150,9 +158,10 @@ public class ShortcutPresenter implements Disposable
 
 	public void showActionInfo(ActionData actionData)
 	{
-		String actionId = actionData.actionId;
+		String actionId = actionData.myActionId;
 		String parentGroupName = parentNames.get(actionId);
-		String actionText = (parentGroupName != null ? parentGroupName + " " + MacKeymapUtil.RIGHT + " " : "") + StringUtil.trimEnd(StringUtil.notNullize(actionData.actionText), "...");
+		InputEvent type = actionData.myEvent;
+		String actionText = (parentGroupName != null ? parentGroupName + " " + MacKeymapUtil.RIGHT + " " : "") + StringUtil.trimEnd(StringUtil.notNullize(actionData.myActionText), "...");
 
 		List<Pair<String, Font>> fragments = new ArrayList<>();
 		if(actionText.length() > 0)
@@ -161,7 +170,7 @@ public class ShortcutPresenter implements Disposable
 		}
 
 		Keymaps.KeymapDescription mainKeymap = PresentationAssistant.getInstance().getConfiguration().mainKeymap;
-		List<Pair<String, Font>> shortcutTextFragments = shortcutTextFragments(mainKeymap, actionId, actionText);
+		List<Pair<String, Font>> shortcutTextFragments = shortcutTextFragments(mainKeymap, actionId, actionText, type);
 		if(!shortcutTextFragments.isEmpty())
 		{
 			if(!fragments.isEmpty())
@@ -174,8 +183,8 @@ public class ShortcutPresenter implements Disposable
 		Keymaps.KeymapDescription alternativeKeymap = PresentationAssistant.getInstance().getConfiguration().alternativeKeymap;
 		if(alternativeKeymap != null)
 		{
-			String mainShortcut = shortcutText(mainKeymap.getKeymap().getShortcuts(actionId), mainKeymap.getKind());
-			List<Pair<String, Font>> altShortcutTextFragments = shortcutTextFragments(alternativeKeymap, actionId, mainShortcut);
+			String mainShortcut = shortcutText(mainKeymap.getKeymap().getShortcuts(actionId), mainKeymap.getKind(), type);
+			List<Pair<String, Font>> altShortcutTextFragments = shortcutTextFragments(alternativeKeymap, actionId, mainShortcut, type);
 			if(!altShortcutTextFragments.isEmpty())
 			{
 				addText(fragments, "&nbsp;(");
@@ -184,7 +193,7 @@ public class ShortcutPresenter implements Disposable
 			}
 		}
 
-		Project realProject = actionData.project == null ? ArrayUtil.getFirstElement(ProjectManager.getInstance().getOpenProjects()) : actionData.project;
+		Project realProject = actionData.myProject == null ? ArrayUtil.getFirstElement(ProjectManager.getInstance().getOpenProjects()) : actionData.myProject;
 		if(realProject != null && !realProject.isDisposed() && realProject.isOpen())
 		{
 			if(infoPanel == null || !infoPanel.canBeReused())
@@ -198,10 +207,10 @@ public class ShortcutPresenter implements Disposable
 		}
 	}
 
-	private List<Pair<String, Font>> shortcutTextFragments(Keymaps.KeymapDescription keymap, String actionId, String shownShortcut)
+	private List<Pair<String, Font>> shortcutTextFragments(Keymaps.KeymapDescription keymap, String actionId, String shownShortcut, InputEvent type)
 	{
 		List<Pair<String, Font>> fragments = new ArrayList<>();
-		String shortcutText = shortcutText(keymap.getKeymap().getShortcuts(actionId), keymap.getKind());
+		String shortcutText = shortcutText(keymap.getKeymap().getShortcuts(actionId), keymap.getKind(), type);
 		if(StringUtil.isEmpty(shortcutText) || Comparing.equal(shortcutText, shownShortcut))
 		{
 			return fragments;
@@ -216,7 +225,7 @@ public class ShortcutPresenter implements Disposable
 		}
 		else
 		{
-			String altShortcutAsWin = shortcutText(keymap.getKeymap().getShortcuts(actionId), Keymaps.KeymapKind.WIN);
+			String altShortcutAsWin = shortcutText(keymap.getKeymap().getShortcuts(actionId), Keymaps.KeymapKind.WIN, type);
 			if(!altShortcutAsWin.isEmpty() & !Comparing.equal(shortcutText, altShortcutAsWin))
 			{
 				addText(fragments, altShortcutAsWin);
@@ -231,13 +240,54 @@ public class ShortcutPresenter implements Disposable
 		return fragments;
 	}
 
-	private String shortcutText(Shortcut[] shortcuts, Keymaps.KeymapKind keymapKind)
+	private String shortcutText(Shortcut[] shortcuts, Keymaps.KeymapKind keymapKind, InputEvent inputEvent)
 	{
 		if(shortcuts == null || shortcuts.length == 0)
 		{
 			return "";
 		}
-		return shortcutText(shortcuts[0], keymapKind);
+
+		if(inputEvent instanceof MouseEvent)
+		{
+			int button = ((MouseEvent) inputEvent).getButton();
+			int clickCount = ((MouseEvent) inputEvent).getClickCount();
+			int modifiers = inputEvent.getModifiersEx();
+
+			for(Shortcut shortcut : shortcuts)
+			{
+				if(shortcut instanceof MouseShortcut)
+				{
+					if(button == ((MouseShortcut) shortcut).getButton() && clickCount == ((MouseShortcut) shortcut).getClickCount() && modifiers == ((MouseShortcut) shortcut).getModifiers())
+					{
+						return shortcutText((MouseShortcut) shortcut, keymapKind);
+					}
+				}
+			}
+		}
+
+		for(Shortcut shortcut : shortcuts)
+		{
+			if(shortcut instanceof KeyboardShortcut)
+			{
+				return shortcutText((KeyboardShortcut) shortcut, keymapKind);
+			}
+		}
+
+		return "";
+	}
+
+	@NotNull
+	private String shortcutText(KeyboardShortcut shortcut, Keymaps.KeymapKind kind)
+	{
+		List<KeyStroke> list = Arrays.asList(shortcut.getFirstKeyStroke(), shortcut.getSecondKeyStroke());
+		return StringUtil.join(ContainerUtil.mapNotNull(list, keyStroke ->
+		{
+			if(keyStroke == null)
+			{
+				return null;
+			}
+			return shortcutText(keyStroke, kind);
+		}), ", ");
 	}
 
 	@NotNull
@@ -258,22 +308,56 @@ public class ShortcutPresenter implements Disposable
 	}
 
 	@NotNull
-	private String shortcutText(Shortcut shortcut, Keymaps.KeymapKind keymapKind)
+	private String shortcutText(MouseShortcut shortcut, Keymaps.KeymapKind keymapKind)
 	{
-		if(shortcut instanceof KeyboardShortcut)
+		String mouseShortcutText = MouseShortcutPresentation.getMouseShortcutText(shortcut);
+		if(mouseShortcutText == null)
 		{
-			List<KeyStroke> list = Arrays.asList(((KeyboardShortcut) shortcut).getFirstKeyStroke(), ((KeyboardShortcut) shortcut).getSecondKeyStroke());
-			return StringUtil.join(ContainerUtil.mapNotNull(list, keyStroke ->
-			{
-				if(keyStroke == null)
-				{
-					return null;
-				}
-				return shortcutText(keyStroke, keymapKind);
-			}), ", ");
+			return "";
 		}
 
-		return "";
+		int modifiers = shortcut.getModifiers();
+		List<String> texts = new ArrayList<>();
+		if(modifiers > 0)
+		{
+			String winModifiersText = keymapKind == Keymaps.KeymapKind.MAC ? MacKeymapUtil.getModifiersText(modifiers) : KeyEvent.getKeyModifiersText(mapNewModifiers(modifiers));
+			if(!StringUtil.isEmpty(winModifiersText))
+			{
+				texts.add(winModifiersText);
+			}
+		}
+		texts.add(mouseShortcutText);
+		return String.join("+", texts);
+	}
+
+	/**
+	 * copy&paste from KeymapUtil
+	 */
+	@JdkConstants.InputEventMask
+	private static int mapNewModifiers(@JdkConstants.InputEventMask int modifiers)
+	{
+		if((modifiers & InputEvent.SHIFT_DOWN_MASK) != 0)
+		{
+			modifiers |= InputEvent.SHIFT_MASK;
+		}
+		if((modifiers & InputEvent.ALT_DOWN_MASK) != 0)
+		{
+			modifiers |= InputEvent.ALT_MASK;
+		}
+		if((modifiers & InputEvent.ALT_GRAPH_DOWN_MASK) != 0)
+		{
+			modifiers |= InputEvent.ALT_GRAPH_MASK;
+		}
+		if((modifiers & InputEvent.CTRL_DOWN_MASK) != 0)
+		{
+			modifiers |= InputEvent.CTRL_MASK;
+		}
+		if((modifiers & InputEvent.META_DOWN_MASK) != 0)
+		{
+			modifiers |= InputEvent.META_MASK;
+		}
+
+		return modifiers;
 	}
 
 	private void fillParentNames(ActionGroup group, String parentName)

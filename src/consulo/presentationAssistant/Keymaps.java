@@ -24,7 +24,7 @@ import com.intellij.openapi.util.SystemInfo;
  * @author VISTALL
  * @since 21-Aug-17
  */
-public class Keymaps
+class Keymaps
 {
 	static enum KeymapKind
 	{

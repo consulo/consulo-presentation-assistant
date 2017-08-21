@@ -35,7 +35,7 @@ import com.intellij.util.containers.ContainerUtil;
  * @author VISTALL
  * @since 21-Aug-17
  */
-public class WinKeyStrokePresentation
+class WinKeyStrokePresentation
 {
 	private static final List<Pair<String, Integer>> inputEventMaskFieldNames;
 	private static final Map<Integer, String> keyEventFieldNames;

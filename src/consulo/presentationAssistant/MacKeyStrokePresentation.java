@@ -33,7 +33,7 @@ import com.intellij.openapi.util.text.StringUtil;
  * @author VISTALL
  * @since 21-Aug-17
  */
-public class MacKeyStrokePresentation
+class MacKeyStrokePresentation
 {
 	private static final Logger LOG = Logger.getInstance(MacKeyStrokePresentation.class);
 
