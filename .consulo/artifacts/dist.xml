@@ -5,8 +5,8 @@
       <element id="directory" name="consulo.presentationAssistant">
         <element id="directory" name="lib">
           <element id="zip-archive" name="consulo.presentationAssistant.jar">
-            <element id="module-production-resource-output" name="presentation-assistant" />
-            <element id="module-output" name="presentation-assistant" />
+            <element id="module-production-resource-output" name="consulo-presentation-assistant" />
+            <element id="module-output" name="consulo-presentation-assistant" />
           </element>
         </element>
       </element>
