@@ -1,0 +1,16 @@
+<idea-plugin>
+	<id>consulo.presentationAssistant</id>
+	<name>Presentation Assistant</name>
+	<version>SNAPSHOT</version>
+	<vendor>consulo.io</vendor>
+
+	<application-components>
+		<component>
+			<implementation-class>consulo.presentationAssistant.PresentationAssistant</implementation-class>
+		</component>
+	</application-components>
+
+	<actions>
+		<action id="TogglePresentationAssistantAction" class="consulo.presentationAssistant.action.TogglePresentationAssistantAction" />
+	</actions>
+</idea-plugin>

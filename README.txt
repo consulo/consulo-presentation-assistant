@@ -1,0 +1,1 @@
+This plugin is port of https://github.com/chashnikov/IntelliJ-presentation-assistant from Kotlin to Java
