@@ -60,6 +60,8 @@ import com.intellij.util.ui.UIUtil;
 /**
  * @author VISTALL
  * @since 21-Aug-17
+ *
+ * original author Nikolay Chashnikov (kotlin)
  */
 class ActionInfoPanel extends NonOpaquePanel implements Disposable
 {

@@ -57,6 +57,8 @@ import com.intellij.util.containers.ContainerUtil;
 /**
  * @author VISTALL
  * @since 21-Aug-17
+ *
+ * original author Nikolay Chashnikov (kotlin)
  */
 class ShortcutPresenter implements Disposable
 {

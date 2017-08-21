@@ -32,6 +32,8 @@ import com.intellij.openapi.util.text.StringUtil;
 /**
  * @author VISTALL
  * @since 21-Aug-17
+ *
+ * original author Nikolay Chashnikov (kotlin)
  */
 class MacKeyStrokePresentation
 {

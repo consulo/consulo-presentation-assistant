@@ -23,6 +23,8 @@ import com.intellij.openapi.util.SystemInfo;
 /**
  * @author VISTALL
  * @since 21-Aug-17
+ *
+ * original author Nikolay Chashnikov (kotlin)
  */
 class Keymaps
 {

@@ -30,6 +30,8 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 /**
  * @author VISTALL
  * @since 21-Aug-17
+ *
+ * original author Nikolay Chashnikov (kotlin)
  */
 @State(name = "PresentationAssistant", storages = @Storage("presentation-assistant.xml"))
 public class PresentationAssistant implements Disposable, ApplicationComponent, PersistentStateComponent<PresentationAssistantState>
