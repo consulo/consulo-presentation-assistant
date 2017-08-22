@@ -28,6 +28,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.BitUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.intellij.lang.annotations.JdkConstants;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
@@ -44,7 +44,7 @@ import java.util.List;
 /**
  * @author VISTALL
  * @since 21-Aug-17
- *
+ * <p>
  * original author Nikolay Chashnikov (kotlin)
  */
 class ShortcutPresenter implements Disposable
@@ -149,7 +149,7 @@ class ShortcutPresenter implements Disposable
 	{
 		String actionId = actionData.myActionId;
 		String parentGroupName = parentNames.get(actionId);
-		InputEvent type = actionData.myEvent;
+		InputEvent event = actionData.myEvent;
 		String actionText = (parentGroupName != null ? parentGroupName + " " + MacKeymapUtil.RIGHT + " " : "") + StringUtil.trimEnd(StringUtil.notNullize(actionData.myActionText), "...");
 
 		List<Pair<String, Font>> fragments = new ArrayList<>();
@@ -159,7 +159,7 @@ class ShortcutPresenter implements Disposable
 		}
 
 		Keymaps.KeymapDescription mainKeymap = PresentationAssistant.getInstance().getConfiguration().mainKeymap;
-		List<Pair<String, Font>> shortcutTextFragments = shortcutTextFragments(mainKeymap, actionId, actionText, type);
+		List<Pair<String, Font>> shortcutTextFragments = shortcutTextFragments(mainKeymap, actionId, actionText, event);
 		if(!shortcutTextFragments.isEmpty())
 		{
 			if(!fragments.isEmpty())
@@ -172,8 +172,8 @@ class ShortcutPresenter implements Disposable
 		Keymaps.KeymapDescription alternativeKeymap = PresentationAssistant.getInstance().getConfiguration().alternativeKeymap;
 		if(alternativeKeymap != null)
 		{
-			String mainShortcut = shortcutText(mainKeymap.getKeymap().getShortcuts(actionId), mainKeymap.getKind(), type);
-			List<Pair<String, Font>> altShortcutTextFragments = shortcutTextFragments(alternativeKeymap, actionId, mainShortcut, type);
+			String mainShortcut = shortcutText(mainKeymap.getKeymap().getShortcuts(actionId), mainKeymap.getKind(), event);
+			List<Pair<String, Font>> altShortcutTextFragments = shortcutTextFragments(alternativeKeymap, actionId, mainShortcut, tryToRemapMouseEvent(event));
 			if(!altShortcutTextFragments.isEmpty())
 			{
 				addText(fragments, "&nbsp;(");
@@ -194,6 +194,25 @@ class ShortcutPresenter implements Disposable
 				infoPanel.updateText(realProject, fragments);
 			}
 		}
+	}
+
+	private static InputEvent tryToRemapMouseEvent(InputEvent e)
+	{
+		if(!(e instanceof MouseEvent))
+		{
+			return e;
+		}
+		MouseEvent event = (MouseEvent) e;
+
+		int modifiers = event.getModifiers();
+		// just a hack for search correct mouse event for alternative keymap
+		// Meta + Click => Ctrl + Click
+		if(BitUtil.isSet(modifiers, MouseEvent.META_MASK))
+		{
+			modifiers = BitUtil.clear(modifiers, MouseEvent.META_MASK);
+			modifiers = BitUtil.set(modifiers, MouseEvent.CTRL_MASK, true);
+		}
+		return new MouseEvent(event.getComponent(), event.getID(), event.getWhen(), modifiers, event.getX(), event.getY(), event.getClickCount(), event.isPopupTrigger(), event.getButton());
 	}
 
 	private List<Pair<String, Font>> shortcutTextFragments(Keymaps.KeymapDescription keymap, String actionId, String shownShortcut, InputEvent type)
@@ -309,7 +328,7 @@ class ShortcutPresenter implements Disposable
 		List<String> texts = new ArrayList<>();
 		if(modifiers > 0)
 		{
-			String winModifiersText = keymapKind == Keymaps.KeymapKind.MAC ? MacKeymapUtil.getModifiersText(modifiers) : KeyEvent.getKeyModifiersText(modifiers);
+			String winModifiersText = keymapKind == Keymaps.KeymapKind.MAC ? MacKeymapUtil.getModifiersText(modifiers) : WinKeyStrokePresentation.getWinModifiersText(modifiers);
 			if(!StringUtil.isEmpty(winModifiersText))
 			{
 				texts.add(winModifiersText);

@@ -16,12 +16,12 @@
 
 package consulo.presentationAssistant;
 
+import com.intellij.openapi.actionSystem.MouseShortcut;
+import org.jetbrains.annotations.Nullable;
+
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jetbrains.annotations.Nullable;
-import com.intellij.openapi.actionSystem.MouseShortcut;
 
 /**
  * @author VISTALL
