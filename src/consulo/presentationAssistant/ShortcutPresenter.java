@@ -16,32 +16,8 @@
 
 package consulo.presentationAssistant;
 
-import java.awt.Font;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.KeyStroke;
-
-import org.intellij.lang.annotations.JdkConstants;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.actionSystem.KeyboardShortcut;
-import com.intellij.openapi.actionSystem.MouseShortcut;
-import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.keymap.MacKeymapUtil;
 import com.intellij.openapi.project.Project;
@@ -53,6 +29,17 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
+import org.intellij.lang.annotations.JdkConstants;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.util.*;
+import java.util.List;
 
 /**
  * @author VISTALL
@@ -318,11 +305,11 @@ class ShortcutPresenter implements Disposable
 			return "";
 		}
 
-		int modifiers = shortcut.getModifiers();
+		int modifiers = mapNewModifiers(shortcut.getModifiers());
 		List<String> texts = new ArrayList<>();
 		if(modifiers > 0)
 		{
-			String winModifiersText = keymapKind == Keymaps.KeymapKind.MAC ? MacKeymapUtil.getModifiersText(modifiers) : KeyEvent.getKeyModifiersText(mapNewModifiers(modifiers));
+			String winModifiersText = keymapKind == Keymaps.KeymapKind.MAC ? MacKeymapUtil.getModifiersText(modifiers) : KeyEvent.getKeyModifiersText(modifiers);
 			if(!StringUtil.isEmpty(winModifiersText))
 			{
 				texts.add(winModifiersText);
