@@ -16,11 +16,12 @@
 
 package consulo.presentationAssistant;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.inject.Singleton;
+
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -30,13 +31,14 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 /**
  * @author VISTALL
  * @since 21-Aug-17
- *
+ * <p>
  * original author Nikolay Chashnikov (kotlin)
  */
+@Singleton
 @State(name = "PresentationAssistant", storages = @Storage("presentation-assistant.xml"))
-public class PresentationAssistant implements Disposable, ApplicationComponent, PersistentStateComponent<PresentationAssistantState>
+public class PresentationAssistant implements Disposable, PersistentStateComponent<PresentationAssistantState>
 {
-	@NotNull
+	@Nonnull
 	public static PresentationAssistant getInstance()
 	{
 		return ApplicationManager.getApplication().getComponent(PresentationAssistant.class);
@@ -58,7 +60,16 @@ public class PresentationAssistant implements Disposable, ApplicationComponent, 
 		XmlSerializerUtil.copyBean(state, myConfiguration);
 	}
 
-	@NotNull
+	@Override
+	public void afterLoadState()
+	{
+		if(myConfiguration.myShowActionDescriptions)
+		{
+			myPresenter = new ShortcutPresenter();
+		}
+	}
+
+	@Nonnull
 	public PresentationAssistantState getConfiguration()
 	{
 		return myConfiguration;
@@ -77,22 +88,6 @@ public class PresentationAssistant implements Disposable, ApplicationComponent, 
 		{
 			myPresenter.disable();
 			myPresenter = null;
-		}
-	}
-
-	@NotNull
-	@Override
-	public String getComponentName()
-	{
-		return "PresentationAssistant";
-	}
-
-	@Override
-	public void initComponent()
-	{
-		if(myConfiguration.myShowActionDescriptions)
-		{
-			myPresenter = new ShortcutPresenter();
 		}
 	}
 

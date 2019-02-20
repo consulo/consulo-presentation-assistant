@@ -31,8 +31,8 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.BitUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.intellij.lang.annotations.JdkConstants;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -284,7 +284,7 @@ class ShortcutPresenter implements Disposable
 		return "";
 	}
 
-	@NotNull
+	@Nonnull
 	private String shortcutText(KeyboardShortcut shortcut, Keymaps.KeymapKind kind)
 	{
 		List<KeyStroke> list = Arrays.asList(shortcut.getFirstKeyStroke(), shortcut.getSecondKeyStroke());
@@ -298,7 +298,7 @@ class ShortcutPresenter implements Disposable
 		}), ", ");
 	}
 
-	@NotNull
+	@Nonnull
 	private String shortcutText(KeyStroke keyStroke, Keymaps.KeymapKind keymapKind)
 	{
 		switch(keymapKind)
@@ -315,7 +315,7 @@ class ShortcutPresenter implements Disposable
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	private String shortcutText(MouseShortcut shortcut, Keymaps.KeymapKind keymapKind)
 	{
 		String mouseShortcutText = MouseShortcutPresentation.getMouseShortcutText(shortcut);

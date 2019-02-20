@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.BitUtil;
@@ -117,7 +117,7 @@ class WinKeyStrokePresentation
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public static String getWinModifiersText(int modifiers)
 	{
 		String[] array = inputEventMaskFieldNames.stream().filter(it -> BitUtil.isSet(modifiers, it.getSecond())).map(it -> it.getFirst()).toArray(String[]::new);

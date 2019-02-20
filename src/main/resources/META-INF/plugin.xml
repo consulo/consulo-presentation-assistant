@@ -20,13 +20,11 @@
 	<version>SNAPSHOT</version>
 	<vendor>consulo.io</vendor>
 
-	<application-components>
-		<component>
-			<implementation-class>consulo.presentationAssistant.PresentationAssistant</implementation-class>
-		</component>
-	</application-components>
-
 	<actions>
 		<action id="TogglePresentationAssistantAction" class="consulo.presentationAssistant.action.TogglePresentationAssistantAction" />
 	</actions>
+
+	<extensions defaultExtensionNs="com.intellij">
+		<applicationService serviceImplementation="consulo.presentationAssistant.PresentationAssistant" lazy="false" />
+	</extensions>
 </idea-plugin>

@@ -22,7 +22,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.keymap.MacKeymapUtil;
 import com.intellij.openapi.util.Comparing;
@@ -63,7 +64,7 @@ class MacKeyStrokePresentation
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public static List<Pair<String, String>> getNonDisplayableMacSymbols(Font font)
 	{
 		List<Pair<String, String>> result = new ArrayList<>();

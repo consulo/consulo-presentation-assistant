@@ -28,13 +28,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.IntConsumer;
 
+import javax.annotation.Nonnull;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -236,7 +236,7 @@ class ActionInfoPanel extends NonOpaquePanel implements Disposable
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	private List<JLabel> createLabels(List<Pair<String, Font>> textFragments, IdeFrame ideFrame)
 	{
 		int fontSize = PresentationAssistant.getInstance().getConfiguration().getFontSize();
