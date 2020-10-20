@@ -16,19 +16,17 @@
 
 package consulo.presentationAssistant;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.keymap.MacKeymapUtil;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import consulo.logging.Logger;
+
+import javax.annotation.Nonnull;
+import java.awt.*;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author VISTALL

@@ -14,7 +14,7 @@
   - limitations under the License.
   -->
 
-<idea-plugin>
+<consulo-plugin>
 	<id>consulo.presentationAssistant</id>
 	<name>Presentation Assistant</name>
 	<version>SNAPSHOT</version>
@@ -27,4 +27,4 @@
 	<extensions defaultExtensionNs="com.intellij">
 		<applicationService serviceImplementation="consulo.presentationAssistant.PresentationAssistant" lazy="false" />
 	</extensions>
-</idea-plugin>
+</consulo-plugin>
