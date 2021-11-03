@@ -20,6 +20,10 @@
 	<version>SNAPSHOT</version>
 	<vendor>consulo.io</vendor>
 
+	<tags>
+		<tag>ide.extension</tag>
+	</tags>
+
 	<actions>
 		<action id="TogglePresentationAssistantAction" class="consulo.presentationAssistant.action.TogglePresentationAssistantAction" />
 	</actions>
