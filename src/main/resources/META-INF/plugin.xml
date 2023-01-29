@@ -15,20 +15,13 @@
   -->
 
 <consulo-plugin url="https://github.com/consulo/consulo-presentation-assistant">
-	<id>consulo.presentationAssistant</id>
-	<name>Presentation Assistant</name>
-	<version>SNAPSHOT</version>
-	<vendor>consulo.io</vendor>
+  <id>consulo.presentationAssistant</id>
+  <name>Presentation Assistant (Obsolete)</name>
+  <description>Obsolete plugin - was merged to platform code (just remove)</description>
+  <version>SNAPSHOT</version>
+  <vendor>consulo.io</vendor>
 
-	<tags>
-		<tag>ide.extension</tag>
-	</tags>
-
-	<actions>
-		<action id="TogglePresentationAssistantAction" class="consulo.presentationAssistant.action.TogglePresentationAssistantAction" />
-	</actions>
-
-	<extensions defaultExtensionNs="com.intellij">
-		<applicationService serviceImplementation="consulo.presentationAssistant.PresentationAssistant" lazy="false" />
-	</extensions>
+  <tags>
+    <tag>ide.extension</tag>
+  </tags>
 </consulo-plugin>
